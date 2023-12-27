@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Summarization</title>
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css"/>
+    <!--Replace with your tailwind.css once created-->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet" />
+    <!-- CSS styles -->
+    <style>
+        body {
+            position:fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* This makes the background fill the entire div and adjust to the screen size */
+    background-repeat: no-repeat;
+   
+        }
+        .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom right, #7F7FD5  0%, #91EAE4 100%);
+    background-size: 100% 100%; /* This makes the background fill the entire div and adjust to the screen size */
+    background-repeat: no-repeat;
+    z-index: -1; /* Push the background behind the content */
+}
+
+        .header {
+            background: linear-gradient(90deg, #4f7dfd 0%, #a9caf5 100%);
+            
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header i.material-icons {
+            text-align:right;
+            font-size: 25px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .header .login {
+            background-color: #555;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            resize: vertical;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4d98ee;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #45A049;
+            transform: scale(1.05);
+        }
+
+        #output-text {
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #4CAF50, 0 0 70px #4CAF50, 0 0 80px #4CAF50, 0 0 100px #4CAF50, 0 0 150px #4CAF50;
+        }
+
+        /* Dark mode */
+        body.dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .loading-indicator {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4CAF50;
+            font-size: 20px;
+        }
+
+        .clear-input-btn {
+            background-color: #4d98ee;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-indicator::after {
+            content: '';
+            display: block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid rgba(76, 175, 80, 0.2);
+            border-top: 3px solid #4d98ee;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        textarea {
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+        }
+
+        .dark-mode-switch {
+            display: flex;
+            align-items: center;
+        }
+
+        .dark-mode-label {
+            margin-right: 8px;
+        }
+
+        .dark-mode-toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .dark-mode-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .model-dropdown #model-sel {
+        color: #020202; /* Set the text color to white in dark mode */
+    }
+
+        .dark-mode-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .dark-mode-slider:before {
+            content: "";
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 2px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+  
+
+    button {
+      background-color: transparent;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      width: 10%;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    
+
+        input:checked + .dark-mode-slider {
+            background-color: #4d98ee;
+        }
+
+        input:checked + .dark-mode-slider:before {
+            transform: translateX(26px);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            background-color: #555555;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #4d98ee;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .container {
+            overflow: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #4d98ee #f1f1f1;
+        }
+
+        .container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background-color: #4d98ee;
+            border-radius: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px; /* Add some space between the buttons */
+        }
+
+        
+        body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #010c19;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+      z-index: 1;
+    }
+
+    .sidebar ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      padding: 15px;
+    }
+
+    .sidebar a {
+      text-decoration: none;
+      color: #f1f1f1;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      color: #3498db;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 50px;
+    }
+
+    .content {
+      position: absolute;
+      margin-left: 25px;
+      padding: 20px;
+    }
+
+    .open-btn {
+      font-size: 20px;
+      align-items: center;
+      position: relative;
+      margin-top: 0px;
+      color:#f4f8f4;
+      margin-left: -40px;
+      cursor: pointer;
+      background-color: 4d98ee;
+    box-shadow: 0px 0px 0px;
+    }
+
+        /* ... (additional CSS styles) ... */   
+
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="header">
+        <div class="sidebar">
+            <button class="close-btn">&times;</button>
+            <ul>
+              <li><a href="/summarize1/{{uname}}">Summarizer</a></li>
+              <li><a href="/summarize2/{{uname}}">Pretrained Summarizer</a></li>
+              <li><a href="/stt/{{uname}}">Speech to Text</a></li>
+              <li><a href="/audio/{{uname}}">Text to Speech</a></li>
+              <li><a href="/iot/{{uname}}">Image Upload</a></li>
+              <li><a href="/payment/{{uname}}">Premium</a></li>
+            </ul>
+          </div>
+          <div class="content">
+            <button class="open-btn">&#9776;</button>
+          </div>
+        <i class="material-icons" style="font-style: normal; margin-left: 150px;" >Text Summarization</i><!-- Google Speech-to-Text converter icon -->
+        <h1></h1>
+        
+        
+        
+        {% csrf_token %}
+        <button
+    id="navAction"
+    class="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full mt-2 lg:mt-0 py-4 px-2 shadow opacity-75 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out text-sm"
+>
+    {{uname}}
+</button>
+
+    </div></div><!-- Placeholder for username after login -->
+    </div>
+    
+    
+      <script>
+        const openBtn = document.querySelector('.open-btn');
+        const closeBtn = document.querySelector('.close-btn');
+        const sidebar = document.querySelector('.sidebar');
+    
+        openBtn.addEventListener('click', () => {
+          sidebar.style.width = '250px';
+        });
+    
+        closeBtn.addEventListener('click', () => {
+          sidebar.style.width = '0';
+        });
+      </script>
+    <div class="container">
+        <div class="card">
+            <!-- Dropdown menu -->
+            <div class="model-dropdown">
+                <label  id="model-sel">Model 1:</label>
+                <!-- <span>Choose a Model</span> -->
+               <!--- <select id="model-select">
+                    <option value="model1">Model 1</option>
+                    <option value="model2">Model 2</option>
+                </select>-->
+            </div>
+            <form action="/summarize1/{{uname}}" method="POST">
+              {% csrf_token %}
+          <textarea id="input-text" placeholder="Enter your text here" name="data">{{input}}</textarea>
+         <!-- <button type="submit" id="summarize-btn" class="tooltip" >
+          Summarize
+              <span class="tooltiptext">Click to summarize the text</span>
+          </button>-->
+      
+                <!-- Image upload option -->
+                
+                <!-- Audio recording option -->
+                
+            </div>
+            <span class="loading-indicator" id="loading-indicator"></span>
+            <textarea id="output-text" placeholder="Summarized text will appear here" readonly>{{result}}</textarea>
+            <button type="submit"class="clear-input-btn tooltip" id="clear-input-btn" style="width: 111px;margin-left: 240px;">
+                Summarize
+                <span class="tooltiptext">Click to Summarize text</span>
+            </button>
+            
+        </form>
+        </div>
+    </div>
+    <script>
+        // Function to toggle dark mode
+        function toggleDarkMode() {
+            const body = document.body;
+            const dropdown = document.querySelector(".model-dropdown");
+            body.classList.toggle("dark-mode");
+            dropdown.classList.toggle("dark-mode");
+        }
+
+        // Event listener for the dark mode toggle
+        const darkModeToggle = document.getElementById("dark-mode-toggle");
+        darkModeToggle.addEventListener("change", toggleDarkMode);
+
+        // Function to handle model selection
+        function handleModelSelect() {
+            const selectedModel = document.getElementById("model-select").value;
+            // You can add code here to handle the selected model (e.g., change API endpoint or processing logic)
+            console.log("Selected Model:", selectedModel);
+        }
+
+        // Event listener for model selection
+        const modelSelect = document.getElementById("model-select");
+        modelSelect.addEventListener("change", handleModelSelect);
+    </script>
+</body>
+</html>

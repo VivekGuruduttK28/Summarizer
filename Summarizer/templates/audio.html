@@ -1,0 +1,567 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css"/>
+    <!--Replace with your tailwind.css once created-->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom right, #7F7FD5  0%, #91EAE4 100%);
+    background-size: 100% 100%; /* This makes the background fill the entire div and adjust to the screen size */
+    background-repeat: no-repeat;
+    z-index: -1; /* Push the background behind the content */
+}
+        body {
+            
+            font-family: 'Open Sans', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            justify-content: center;
+        }
+        .audiojust{
+            margin-top:100px;
+            margin-left:550px;
+            background-color: #transparent  ;
+            justify-content: center;
+        }
+        .header {
+            background: linear-gradient(90deg, #4f7dfd 0%, #a9caf5 100%);
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header i.material-icons {
+            font-size: 28px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .header .login {
+            background-color: #555;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        textarea {
+            width: 50%;
+            margin-top: 20px;
+            margin-left: 350px;
+            height: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+      background-color: transparent;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      width: 10%;
+      transition: background-color 0.2s ease;
+    }
+
+        button:hover {
+            opacity:0.75;
+            transform: scale(1.1);
+        }
+
+        #output-text {
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #4CAF50, 0 0 70px #4CAF50, 0 0 80px #4CAF50, 0 0 100px #4CAF50, 0 0 150px #4CAF50;
+        }
+
+        /* Dark mode */
+        body.dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .loading-indicator {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4d98ee;
+            font-size: 20px;
+        }
+
+        .clear-input-btn {
+            background-color: #4d98ee;
+            color: #fff;
+            margin-top: 20px;
+            margin-left: 650px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }   
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-indicator::after {
+            content: '';
+            display: block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid rgba(76, 175, 80, 0.2);
+            border-top: 3px solid #4d98ee;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        textarea {
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+        }
+
+        .dark-mode-switch {
+            display: flex;
+            align-items: center;
+        }
+
+        .dark-mode-label {
+            margin-right: 8px;
+        }
+
+        .dark-mode-toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .dark-mode-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .dark-mode-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .dark-mode-slider:before {
+            content: "";
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 2px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        input:checked + .dark-mode-slider {
+            background-color: #4d98ee;
+        }
+
+        input:checked + .dark-mode-slider:before {
+            transform: translateX(26px);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+
+        .file-input-button .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px;
+            position: relative;
+            z-index: 1;
+            bottom: 200%;
+            top: -40px;
+            left: -16%;
+            /* margin-left: -200px; */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .file-input-button:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .container {
+            overflow: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #4d98ee #f1f1f1;
+        }
+
+        .container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background-color: #4CAF50;
+            border-radius: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px; /* Add some space between the buttons */
+        }
+
+        .subscribe {
+            position: relative;
+        }
+        
+        .subscribe button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            position: absolute;
+            right: 0;
+            top: 0;
+            margin: 0;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+      
+        /* ... (additional CSS styles) ... */
+        .file-input-button {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #4CAF50;
+            margin-top: 200px;
+            margin-left: 650px;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* Style for the actual file input */
+        .file-input-button input[type="file"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            font-size: 100px;
+            cursor: pointer;
+            opacity: 0;
+        }
+        .file-input-button input[type="button"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            font-size: 100px;
+            cursor: pointer;
+            opacity: 0;
+        }
+
+        .rt-btn{
+            padding: 10px 30px;
+            background-color: #4d98ee;
+            color: #fff;
+            border: none;
+            margin-left: 640px;
+            margin-top: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  
+        }
+        body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #010c19;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+      z-index: 1;
+    }
+
+    .sidebar ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      padding: 15px;
+    }
+
+    .sidebar a {
+      text-decoration: none;
+      color: #f1f1f1;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      color: #3498db;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 50px;
+    }
+    
+
+    .content {
+      position: absolute;
+      margin-left: 25px;
+      padding: 20px;
+    }
+
+    .open-btn {
+      font-size: 20px;
+      align-items: center;
+      position: relative;
+      margin-top: 0px;
+      color:#f4f8f4;
+      margin-left: -40px;
+      cursor: pointer;
+      background-color: 4d98ee;
+    box-shadow: 0px 0px 0px;
+    }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="background"></div>
+    <div class="body">
+      <div class="header">
+        <div class="sidebar">
+            <button class="close-btn">&times;</button>
+            <ul>
+                <li><a href="/summarize1/{{uname}}">Summarizer</a></li>
+                <li><a href="/summarize2/{{uname}}">Pretrained Summarizer</a></li>
+                <li><a href="/stt/{{uname}}">Speech to Text</a></li>
+                <li><a href="/audio/{{uname}}">Text to Speech</a></li>
+                <li><a href="/iot/{{uname}}">Image Upload</a></li>
+                <li><a href="/payment/{{uname}}">Premium</a></li>
+              </ul>
+          </div>
+          <div class="content">
+            <button class="open-btn">&#9776;</button>
+          </div>
+        <i class="material-icons" style="font-style: normal;margin-left: 150px;">Audio Summarization</i><!-- Google Speech-to-Text converter icon -->
+        <h1></h1>
+        
+        <button
+    id="navAction"
+    class="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full mt-2 lg:mt-0 py-4 px-2 shadow opacity-75 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out text-sm"
+>
+    {{uname}}
+</button>
+    </div>
+
+    
+      
+    
+      <script>
+        const openBtn = document.querySelector('.open-btn');
+        const closeBtn = document.querySelector('.close-btn');
+        const sidebar = document.querySelector('.sidebar');
+    
+        openBtn.addEventListener('click', () => {
+          sidebar.style.width = '250px';
+        });
+    
+        closeBtn.addEventListener('click', () => {
+          sidebar.style.width = '0';
+        });
+      </script>
+    
+    <form action="/audio/{{uname}}" method="POST">
+        {% csrf_token %}
+    <div>
+        <span class="loading-indicator" id="loading-indicator"></span>
+            <textarea id="output-text" placeholder="Enter text" name="text1"></textarea>
+            
+                <button class="rt-btn" type="submit">submit</button>
+               <!--- <button class="clear-input-btn tooltip" id="clear-input-btn">
+                    Clear Input
+                    <span class="tooltiptext">Click to clear input text</span>
+                </button>-->
+            
+    </div>
+    </form>
+    <div class="audiojust">
+    <audio controls>
+        <source src="/media/{{audio}}" type="audio/mp3" >
+        Your browser does not support the audio element.
+    </audio>
+</div>
+   <!-- <a href="/summarize1/{{uname}}"><button class="rt-btn">Return back</button></a>-->
+</div>
+</body>
+</html>
+<script>
+    // Check if the browser supports the Web Speech API
+    if ('webkitSpeechRecognition' in window) {
+        const recognition = new webkitSpeechRecognition();
+        const outputDiv = document.getElementById('output-text');
+        const startButton = document.getElementById('startButton');
+        let isListening = false;
+
+        // Set some recognition properties
+        recognition.lang = 'en-US'; // Set the language
+        recognition.continuous = true; // Continue recognizing as long as the user speaks
+        recognition.interimResults = true; // Display interim results (not final until the user stops speaking)
+
+        // Event when speech recognition starts
+        recognition.onstart = () => {
+            isListening = true;
+            startButton.textContent = 'Stop Listening';
+            outputDiv.textContent = 'Listening...';
+        };
+
+        // Event when speech recognition ends
+        recognition.onend = () => {
+            isListening = false;
+            startButton.textContent = 'Start Listening';
+            
+        };
+
+        // Event when the recognition engine receives a result
+        recognition.onresult = (event) => {
+            let interimTranscript = '';
+            let finalTranscript = '';
+
+            // Loop through the results to get both interim and final transcripts
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript + ' ';
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
+
+            // Display the interim and final transcripts
+            outputDiv.innerHTML = `${finalTranscript}`;
+            if (interimTranscript !== '') {
+                outputDiv.innerHTML += `${interimTranscript}`;
+            }
+        };
+
+        // Event when the "Start/Stop Listening" button is clicked
+        startButton.addEventListener('click', () => {
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
+    } else {
+        // Web Speech API is not supported
+        document.getElementById('output').textContent = 'Sorry, speech recognition is not supported in this browser.';
+    }
+</script>
+
+
+
+
